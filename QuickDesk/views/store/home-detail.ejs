@@ -1,0 +1,39 @@
+<%- include('../partials/head') %>
+</head>
+<body>
+  <%- include('../partials/nav') %>
+
+  <main>
+    <h2>
+      Details of <%= home.housename %>
+    </h2>
+    
+    <div>
+      <div>
+        <img src="/uploads/<%= home.photo %>" alt="<%= home.housename %>" style="width:100%; height:auto;">
+      </div>
+      
+      <div>
+        <div>
+          <h3>Description</h3>
+          <p><%= home.description %></p>
+        </div>
+
+        <div>
+          <h3>Location</h3>
+          <p><%= home.location %></p>
+        </div>
+        
+        <div>
+          <h3>Price</h3>
+          <p>₹<%= home.price %> / night</p>
+        </div>
+        
+        <div>
+          <h3>Rating</h3>
+          <p>★ <%= home.rating %> / 5</p>
+        </div>
+
+        <div>
+           <%- include('../partials/favourite')%>
+        </div>

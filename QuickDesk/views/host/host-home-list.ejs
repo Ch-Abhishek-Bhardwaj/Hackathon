@@ -1,0 +1,191 @@
+<%- include('../partials/head') %>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+   <%- include('../partials/nav') %>
+
+        
+            <section class="home-list">
+                <h2>QuickDesk - Ticket Dashboard</h2>
+                
+                <!-- Tickets Section -->
+                <div class="tickets-section">
+                    <div class="tickets-header">
+                        <h3>Support Tickets</h3>
+                        <div class="bulk-actions">
+                            <button class="btn-danger" id="markClosedBtn" onclick="deleteSelectedTickets()" disabled>Mark Closed (Delete Selected)</button>
+                            <button class="btn-secondary" onclick="selectAllTickets()">Select All</button>
+                            <button class="btn-secondary" onclick="deselectAllTickets()">Deselect All</button>
+                        </div>
+                    </div>
+                    <% if (tickets && tickets.length > 0) { %>
+                        <div class="ticket-container">
+                            <% tickets.forEach(ticket => { %>
+                                <div class="ticket-card">
+                                    <div class="ticket-checkbox">
+                                        <input type="checkbox" class="ticket-select" data-ticket-id="<%= ticket._id %>" onchange="updateMarkClosedButton()">
+                                    </div>
+                                    <div class="ticket-header">
+                                        <h4><%= ticket.question %></h4>
+                                        <span class="ticket-status <%= ticket.status %>"><%= ticket.status.toUpperCase() %></span>
+                                    </div>
+                                    <div class="ticket-content">
+                                        <p><strong>From:</strong> <%= ticket.fullName %> (<%= ticket.email %>)</p>
+                                        <p><strong>Tags:</strong> <%= ticket.tags %></p>
+                                        <p><strong>Description:</strong> <%= ticket.description.substring(0, 150) %>...</p>
+                                        <p><strong>Created:</strong> <%= new Date(ticket.createdAt).toLocaleDateString() %></p>
+                                        <% if (ticket.attachment) { %>
+                                            <p><strong>Attachment:</strong> <a href="/uploads/attachments/<%= ticket.attachment %>" target="_blank">View File</a></p>
+                                        <% } %>
+                                    </div>
+                                    <div class="ticket-actions">
+                                        <button class="btn-primary" onclick="updateTicketStatus('<%= ticket._id %>', 'in-progress')">Mark In Progress</button>
+                                        <button class="btn-success" onclick="updateTicketStatus('<%= ticket._id %>', 'closed')">Mark Closed</button>
+                                    </div>
+                                    
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <p>No support tickets submitted yet.</p>
+                    <% } %>
+                </div>
+
+
+            </section>
+            
+            <script>
+                // Function to update ticket status
+                function updateTicketStatus(ticketId, status) {
+                    fetch(`/tickets/${ticketId}/status`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ status: status })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload(); // Refresh page to show updated status
+                        } else {
+                            alert('Error updating ticket status');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error updating ticket status');
+                    });
+                }
+
+                // Function to delete a single ticket
+                function deleteTicket(ticketId) {
+                    if (!confirm('Are you sure you want to delete this ticket?')) {
+                        return;
+                    }
+
+                    fetch(`/tickets/${ticketId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            location.reload(); // Refresh page to show updated list
+                        } else {
+                            alert('Error deleting ticket: ' + (data.message || 'Unknown error'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error deleting ticket: ' + error.message);
+                    });
+                }
+
+                // Function to delete selected tickets
+                function deleteSelectedTickets() {
+                    const selectedTickets = document.querySelectorAll('.ticket-select:checked');
+                    if (selectedTickets.length === 0) {
+                        alert('Please select tickets to delete');
+                        return;
+                    }
+
+                    if (!confirm(`Are you sure you want to delete ${selectedTickets.length} selected ticket(s)?`)) {
+                        return;
+                    }
+
+                    const ticketIds = Array.from(selectedTickets).map(checkbox => checkbox.dataset.ticketId);
+                    console.log('Sending ticket IDs for deletion:', ticketIds); // Debug log
+
+                    fetch('/tickets/delete-multiple', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ ticketIds: ticketIds })
+                    })
+                    .then(response => {
+                        console.log('Response status:', response.status); // Debug log
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Response data:', data); // Debug log
+                        if (data.success) {
+                            alert(`Successfully deleted ${data.deletedCount} ticket(s)`);
+                            location.reload(); // Refresh page to show updated list
+                        } else {
+                            alert(' ' + (data.message || 'Unknown error'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error deleting tickets: ' + error.message);
+                    });
+                }
+
+                // Function to update Mark Closed button state
+                function updateMarkClosedButton() {
+                    const selectedTickets = document.querySelectorAll('.ticket-select:checked');
+                    const markClosedBtn = document.getElementById('markClosedBtn');
+                    
+                    if (selectedTickets.length > 0) {
+                        markClosedBtn.disabled = false;
+                        markClosedBtn.textContent = `Mark Closed (Delete ${selectedTickets.length} Selected)`;
+                    } else {
+                        markClosedBtn.disabled = true;
+                        markClosedBtn.textContent = 'Mark Closed (Delete Selected)';
+                    }
+                }
+
+                // Function to select all tickets
+                function selectAllTickets() {
+                    const checkboxes = document.querySelectorAll('.ticket-select');
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = true;
+                    });
+                    updateMarkClosedButton();
+                }
+
+                // Function to deselect all tickets
+                function deselectAllTickets() {
+                    const checkboxes = document.querySelectorAll('.ticket-select');
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                    updateMarkClosedButton();
+                }
+            </script>
+           
+    
+</body>
+</html>

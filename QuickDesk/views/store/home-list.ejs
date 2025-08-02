@@ -1,0 +1,27 @@
+<%- include('../partials/head') %>
+<link rel="stylesheet" href="/home.css">
+</head>
+<body>
+   <%- include('../partials/nav') %>
+        <h1>Welcome to Airbnb </h1>
+        <section class="home-list">
+        <div class="card-container">
+            <% registeredhomes.forEach(home => { %>
+                <div class="card">
+                    <img src="/host/uploads/<%= home.photo %>" alt="Home Image">
+                    <div class="card-content">
+                        <h3><%= home.housename %></h3>
+                        <p>Price: ₹<%= home.price %> / night</p>
+                        <p>Location: <%= home.location %></p>
+                        <p>Rating: <%= home.rating %></p>
+                          <%- include('../partials/favourite',{ home: home })%>
+                        <a href="/homes/<%= home._id %>">View Details</a>
+                       
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </section>
+    
+</body>
+</html>

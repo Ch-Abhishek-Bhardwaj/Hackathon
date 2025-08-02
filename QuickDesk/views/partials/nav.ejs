@@ -1,0 +1,25 @@
+<header>
+  <nav class="navbar">
+    <ul>
+      <li><a href="/">QuickDesk</a></li>
+      
+      <% if (isLoggedIn) { %>
+        
+          <li><a href="/">All Tickets</a></li>
+        
+        
+        <% if (user.UserType === 'guest') { %>
+          <li><a href="/host/host-home-list">Ticket Dashboard</a></li>
+          <li><a href="/host/add-home">Submit Ticket</a></li>
+        <% } %>
+        
+        <form action="/logout" method="POST" style="display: inline;">
+          <button type="submit">Logout</button>
+        </form>
+      <% } else { %>
+        <li><a href="/signup">SignUp</a></li>
+        <li><a href="/login">Login</a></li>
+      <% } %>
+    </ul>
+  </nav>
+</header>

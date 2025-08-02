@@ -1,0 +1,21 @@
+<%- include('../partials/head') %>
+</head>
+<body>
+   <%- include('../partials/nav') %>
+
+        <section class="home-list">
+            <h2>Registered Homes</h2>
+            <ul>
+                <% registeredhomes.forEach(home => { %>
+                    <li><%= home.housename %></li>
+                    <li><%= home.price %></li>
+                    <li><%= home.location %></li>
+                    <li><%= home.rating %></li>
+                    <li><%= home.image %></li>
+                    <button type="button">Book</button>
+                <% }) %>
+            </ul>
+        </section>
+    
+</body>
+</html>

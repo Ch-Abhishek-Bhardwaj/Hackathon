@@ -1,0 +1,42 @@
+<%- include('../partials/head') %>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+   <%- include('../partials/nav') %>
+
+    <section class="home-list">
+        <h2>Welcome to QuickDesk - Support Tickets</h2>
+        
+        <!-- Tickets Section -->
+        <div class="tickets-section">
+            <h3>Recent Support Tickets</h3>
+            <% if (tickets && tickets.length > 0) { %>
+                <div class="ticket-container">
+                    <% tickets.forEach(ticket => { %>
+                        <div class="ticket-card">
+                            <div class="ticket-header">
+                                <h4><%= ticket.question %></h4>
+                                <span class="ticket-status <%= ticket.status %>"><%= ticket.status.toUpperCase() %></span>
+                            </div>
+                            <div class="ticket-content">
+                                <p><strong>From:</strong> <%= ticket.fullName %> (<%= ticket.email %>)</p>
+                                <p><strong>Tags:</strong> <%= ticket.tags %></p>
+                                <p><strong>Description:</strong> <%= ticket.description.substring(0, 100) %>...</p>
+                                <p><strong>Created:</strong> <%= new Date(ticket.createdAt).toLocaleDateString() %></p>
+                                <% if (ticket.attachment) { %>
+                                    <p><strong>Attachment:</strong> <a href="/uploads/attachments/<%= ticket.attachment %>" target="_blank">View File</a></p>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <p>No tickets submitted yet.</p>
+            <% } %>
+        </div>
+
+
+    </section>
+    
+</body>
+</html>

@@ -1,0 +1,28 @@
+<%- include('../partials/head') %>
+<link rel="stylesheet" href="/addhome.css">
+    </head>
+
+    <body>
+        <header>
+            <%- include('../partials/nav') %>
+        </header>
+        
+            
+            <main>
+                 <div>
+                    <h1>Login</h1>
+                 </div>
+                <form action="/login" method="POST">
+                    <%- include('../partials/errors') %>     
+                    <label for="email">Username/Email:</label>
+                    <input type="email" name="email" id="email" value="<%= oldInput.email %>" placeholder="test@gmail.com" required />
+
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" id="password" placeholder="Enter your password" required />
+
+                    <input type="submit" value="Sign In" />
+                </form>
+            </main>
+    </body>
+
+    </html>

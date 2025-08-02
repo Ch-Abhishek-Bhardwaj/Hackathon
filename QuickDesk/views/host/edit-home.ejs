@@ -1,0 +1,44 @@
+<%- include('../partials/head') %>
+    <link rel="stylesheet" href="/home.css">
+    </head>
+
+    <body>
+        <header>
+            <%- include('../partials/nav') %>
+        </header>
+
+
+        <main>
+            <div class="ticket-form">
+            <h2>
+                <%= editing ? "Edit" : "Register" %> your Ticket
+            </h2>
+            <form action="/submit-ticket" method="POST" enctype="multipart/form-data">
+
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" name="fullName" value="<%= editing ? ticket.fullName : '' %>" required>
+
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" value="<%= editing ? ticket.email : '' %>" required>
+
+
+                <label for="tags">Tags</label>
+                <input type="text" id="tags" name="tags" placeholder="Add tags " required>
+
+                <label for="question">Question</label>
+                <input type="text" id="question" name="question" value="<%= editing ? ticket.question : '' %>" required>
+
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="5"
+                    required><%= editing ? ticket.description : '' %></textarea>
+
+                <label for="attachment">Attachment</label>
+                <input type="file" id="attachment" name="attachment" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+
+                <button type="submit">Submit Ticket</button>
+            </form>
+        </div>
+        </main>
+    </body>
+
+    </html>
