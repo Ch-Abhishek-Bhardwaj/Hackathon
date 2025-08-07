@@ -6,7 +6,7 @@ const session =require('express-session');
 const multer = require('multer');
 const mongodbStore = require('connect-mongodb-session')(session); // for session storage in MongoDB 
 
-const DB_path = "mongodb+srv://programsbyabhishek:Abhi%40123456@cluster0.18idzv.mongodb.net/airbnb?retryWrites=true&w=majority&appName=Cluster0";
+const DB_path = "<Enter your db>";
 
 
 
